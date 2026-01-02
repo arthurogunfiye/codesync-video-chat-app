@@ -46,5 +46,3 @@ export const getUserByClerkId = query({
     return user;
   }
 });
-
-// ctx = Clerk context
