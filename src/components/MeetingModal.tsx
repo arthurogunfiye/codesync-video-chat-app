@@ -8,6 +8,7 @@ import {
 } from './ui/dialog';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
+import useMeetingActions from '@/hooks/useMeetingActions';
 
 interface MeetingModalProps {
   isOpen: boolean;
@@ -23,11 +24,21 @@ const MeetingModal = ({
   isJoiningMeeting
 }: MeetingModalProps) => {
   const [meetingUrl, setMeetingUrl] = useState('');
+  const { createInstantMeeting, joinMeeting } = useMeetingActions();
 
-  const createMeeting = () => {};
-  const joinMeeting = () => {};
+  const handleStart = () => {
+    if (isJoiningMeeting) {
+      // Extract the meeting ID from the URL
+      const meetingId = meetingUrl.split('/').pop();
 
-  const handleStart = () => {};
+      if (meetingId) joinMeeting(meetingId);
+    } else {
+      createInstantMeeting();
+    }
+
+    setMeetingUrl('');
+    onClose();
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
