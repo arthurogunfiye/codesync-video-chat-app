@@ -1,6 +1,7 @@
 import { type Metadata } from 'next';
 import ConvexClerkProvider from '@/components/providers/ConvexClerkProvider';
 import localFont from 'next/font/local';
+import '@stream-io/video-react-sdk/dist/css/styles.css';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
