@@ -6,9 +6,14 @@ import {
   SpeakerLayout,
   useCallStateHooks
 } from '@stream-io/video-react-sdk';
-import { LayoutListIcon, LoaderIcon, UsersIcon } from 'lucide-react';
+import {
+  CheckCircle2,
+  LayoutListIcon,
+  LoaderIcon,
+  UsersIcon
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -26,11 +31,40 @@ import CodeEditor from './CodeEditor';
 
 function MeetingRoom() {
   const router = useRouter();
+  const [hasEnded, setHasEnded] = useState(false);
   const [layout, setLayout] = useState<'grid' | 'speaker'>('speaker');
   const [showParticipants, setShowParticipants] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
 
   const callingState = useCallCallingState();
+
+  useEffect(() => {
+    if (callingState === CallingState.LEFT) {
+      setHasEnded(true);
+    }
+  }, [callingState, router]);
+
+  // UI for the Summary Screen
+  if (hasEnded) {
+    return (
+      <div className='flex flex-col items-center justify-center h-[calc(100vh-4rem)] space-y-6 text-center'>
+        <div className='bg-green-100 p-4 rounded-full'>
+          <CheckCircle2 className='size-12 text-green-600' />
+        </div>
+        <div>
+          <h1 className='text-3xl font-bold'>Interview Completed</h1>
+          <p className='text-muted-foreground mt-2'>
+            The meeting has been ended by the interviewer.
+          </p>
+        </div>
+        <div className='flex gap-4'>
+          <Button variant='default' onClick={() => router.push('/')}>
+            Back to Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (callingState !== CallingState.JOINED) {
     return (
@@ -95,7 +129,6 @@ function MeetingRoom() {
                   >
                     <UsersIcon className='size-4' />
                   </Button>
-
                   <EndCallButton />
                 </div>
               </div>

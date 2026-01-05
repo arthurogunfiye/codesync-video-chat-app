@@ -15,7 +15,7 @@ interface MeetingSetupProps {
 
 const MeetingSetup = ({ onSetupComplete }: MeetingSetupProps) => {
   const [isCameraDisabled, setIsCameraDisabled] = useState(true);
-  const [isMicDisabled, setIsMicDisabled] = useState(false);
+  const [isMicDisabled, setIsMicDisabled] = useState(true);
 
   const call = useCall();
 

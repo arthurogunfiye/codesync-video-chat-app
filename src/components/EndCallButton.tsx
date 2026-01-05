@@ -19,24 +19,26 @@ const EndCallButton = () => {
     streamCallId: call?.id || ''
   });
 
-  if (!call || !interview) return null;
+  const isMeetingOwner =
+    localParticipant?.userId === call?.state?.createdBy?.id;
 
-  const isThisUserTheMeetingOwner =
-    localParticipant?.userId === call.state.createdBy?.id;
-
-  if (!isThisUserTheMeetingOwner) return null;
+  if (!isMeetingOwner) return null;
 
   const endCall = async () => {
     try {
-      await call.endCall();
+      // 1. Always end the Stream call for everyone
+      await call?.endCall();
 
-      await updateInterviewStatus({
-        id: interview._id,
-        status: 'completed'
-      });
+      // 2. ONLY update Convex if this was a scheduled interview
+      if (interview) {
+        await updateInterviewStatus({
+          id: interview._id,
+          status: 'completed'
+        });
+      }
 
       router.push('/');
-      toast.success('Meeting ended for everyone');
+      toast.success('Meeting ended');
     } catch (error) {
       console.error(error);
       toast.error('Failed to end the meeting');
@@ -44,7 +46,12 @@ const EndCallButton = () => {
   };
 
   return (
-    <Button variant={'destructive'} onClick={endCall}>
+    <Button
+      variant='destructive'
+      onClick={endCall}
+      // Note: We no longer disable the button while loading
+      // because on-the-fly calls will never finish loading an interview.
+    >
       End Meeting
     </Button>
   );
